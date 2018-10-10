@@ -36,10 +36,15 @@ struct HtmlElement
     return oss.str();
   }
 
-  static unique_ptr<HtmlBuilder> build(string root_name)
+  static HtmlBuilder build(string root_name)
   {
-    return make_unique<HtmlBuilder>(root_name);
+    return {root_name};
   }
+
+//  static unique_ptr<HtmlBuilder> build(string root_name)
+//  {
+//    return make_unique<HtmlBuilder>(root_name);
+//  }
 };
 
 struct HtmlBuilder
@@ -68,10 +73,11 @@ struct HtmlBuilder
   string str() { return root.str(); }
 
   operator HtmlElement() const { return root; }
+//  operator HtmlElement() { return std::move(root); } //Use move instead of copy if you are sure it is the last operatioin.
   HtmlElement root;
 };
 
-int demo()
+int main()
 {
   // <p>hello</p>
   auto text = "hello";
@@ -95,10 +101,14 @@ int demo()
   builder.add_child("li", "hello").add_child("li", "world");
   cout << builder.str() << endl;
 
+  // java style builder
+  auto builder1 = HtmlElement::build("ul").add_child("li", "hello").add_child("li", "world");
+  cout << builder1 << endl;
 
-  auto builder2 = HtmlElement::build("ul")
-    ->add_child_2("li", "hello")->add_child_2("li", "world");
-  cout << builder2 << endl;
+  //auto builder2 = HtmlElement::build("ul")->add_child_2("li", "hello")->add_child_2("li", "world"); //smart pointer, as a rvalue, gets destroied after add_child_2. Raw pointer is invalid then. Need to use smart pointer (shared_ptr) in all places.
+//  auto builder2 = HtmlElement::build("ul");
+//  builder2->add_child_2("li", "hello")->add_child_2("li", "world");
+//  cout << builder2->root.str() << endl;
 
   getchar();
   return 0;

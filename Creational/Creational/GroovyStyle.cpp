@@ -52,13 +52,14 @@ namespace html {
     }
   };
 
-  struct P : Tag
+  struct P : Tag //paragraph
   {
     explicit P(const std::string& text)
       : Tag{"p", text}
     {
     }
 
+    // pass initializer_list to a vector
     P(std::initializer_list<Tag> children)
       : Tag("p", children)
     {
@@ -76,7 +77,7 @@ namespace html {
   };
 }
 
-int main1()
+int main()
 {
   using namespace html;
 
