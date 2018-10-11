@@ -62,3 +62,8 @@ struct Machine : IMachine
 
 // IPrinter --> Printer
 // everything --> Machine
+
+int main()
+{
+
+}
