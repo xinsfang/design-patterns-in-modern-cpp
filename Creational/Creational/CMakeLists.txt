@@ -10,6 +10,8 @@ add_executable(FluentBuilder Builder.cpp)
 add_executable(GroovyStyle GroovyStyle.cpp)
 add_executable(BuilderFacets BuilderFacets.cpp Person.cpp PersonBuilder.cpp)
 add_executable(BuilderCodingExercise BuilderCodingExercise.cpp)
+target_link_libraries(BuilderCodingExercise gtest gtest_main)
+
 
 # factory
 

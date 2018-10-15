@@ -39,7 +39,7 @@ struct Relationships : RelationshipBrowser // low-level
   vector<Person> find_all_children_of(const string &name) override
   {
     vector<Person> result;
-    for (auto&& [first, rel, second] : relations)
+    for (auto&& [first, rel, second] : relations) //decomposition declarations are a C++1z extension
     {
       if (first.name == name && rel == Relationship::parent)
       {

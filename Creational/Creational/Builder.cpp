@@ -9,18 +9,22 @@ struct HtmlBuilder;
 
 struct HtmlElement
 {
-  string name;
-  string text;
-  vector<HtmlElement> elements;
-  const size_t indent_size = 2;
+private:
+    string name;
+    string text;
+    vector<HtmlElement> elements;
+    const size_t indent_size = 2;
 
-  HtmlElement() {}
-  HtmlElement(const string& name, const string& text)
-    : name(name),
-    text(text)
-  {
-  }
+    HtmlElement() {}
 
+    HtmlElement(const string &name, const string &text)
+            : name(name),
+              text(text) {
+    }
+
+    friend HtmlBuilder;
+
+public:
   string str(int indent = 0) const
   {
     ostringstream oss;
@@ -36,15 +40,15 @@ struct HtmlElement
     return oss.str();
   }
 
-  static HtmlBuilder build(string root_name)
-  {
-    return {root_name};
-  }
-
-//  static unique_ptr<HtmlBuilder> build(string root_name)
+//  static HtmlBuilder build(string root_name)  //circular dependency: HtmlElement does not size of HtmlBuilder, even HtmlBuilder is forward declared
 //  {
-//    return make_unique<HtmlBuilder>(root_name);
+//    return {root_name};
 //  }
+
+  static unique_ptr<HtmlBuilder> build(string root_name)
+  {
+    return make_unique<HtmlBuilder>(root_name);
+  }
 };
 
 struct HtmlBuilder
@@ -94,7 +98,7 @@ int main()
   for (auto w : words)
     oss << "  <li>" << w << "</li>";
   oss << "</ul>";
-  printf(oss.str().c_str());
+  fprintf(stdout, "%s\n", oss.str().c_str());
 
   // easier
   HtmlBuilder builder{ "ul" };
@@ -102,13 +106,13 @@ int main()
   cout << builder.str() << endl;
 
   // java style builder
-  auto builder1 = HtmlElement::build("ul").add_child("li", "hello").add_child("li", "world");
-  cout << builder1 << endl;
+//  auto builder1 = HtmlElement::build("ul").add_child("li", "hello").add_child("li", "world");
+//  cout << builder1 << endl;
 
-  //auto builder2 = HtmlElement::build("ul")->add_child_2("li", "hello")->add_child_2("li", "world"); //smart pointer, as a rvalue, gets destroied after add_child_2. Raw pointer is invalid then. Need to use smart pointer (shared_ptr) in all places.
-//  auto builder2 = HtmlElement::build("ul");
-//  builder2->add_child_2("li", "hello")->add_child_2("li", "world");
-//  cout << builder2->root.str() << endl;
+//  auto builder2 = HtmlElement::build("ul")->add_child_2("li", "hello")->add_child_2("li", "world"); //smart pointer, as a rvalue, gets destroyed after execution of 2nd add_child_2. builder2, as raw pointer, is invalid then.
+  auto builder2 = HtmlElement::build("ul");
+  builder2->add_child_2("li", "hello")->add_child_2("li", "world");
+  cout << builder2->root.str() << endl;
 
   getchar();
   return 0;
